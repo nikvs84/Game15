@@ -9,6 +9,11 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.nikvs84.game15.MainActivity">
 
+    <RelativeLayout
+        android:id="@+id/gameField"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
+    </RelativeLayout>
 
 </RelativeLayout>

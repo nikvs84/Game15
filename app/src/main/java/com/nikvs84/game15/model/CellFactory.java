@@ -1,4 +1,4 @@
-package com.nikvs84.game15.models;
+package com.nikvs84.game15.model;
 
 import android.content.Context;
 import android.widget.Button;
