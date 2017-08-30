@@ -19,6 +19,8 @@ public class MainActivity extends AppCompatActivity {
         model = new GameModel(this);
         controller = new GameController(this, model);
         model.setController(controller);
+
+        model.fillGameField();
     }
 
     public void updateView() {

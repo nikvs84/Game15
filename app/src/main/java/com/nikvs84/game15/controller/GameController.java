@@ -18,6 +18,26 @@ public class GameController implements EventListener {
         this.gameModel = gameModel;
     }
 
+    // getters and setters
+
+
+    public MainActivity getMainActivity() {
+        return mainActivity;
+    }
+
+    public void setMainActivity(MainActivity mainActivity) {
+        this.mainActivity = mainActivity;
+    }
+
+    public GameModel getGameModel() {
+        return gameModel;
+    }
+
+    public void setGameModel(GameModel gameModel) {
+        this.gameModel = gameModel;
+    }
+
+    // functional
     @Override
     public void move(GameObject object) {
         object.move();

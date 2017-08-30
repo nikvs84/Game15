@@ -29,24 +29,77 @@ public class Chip implements GameObject {
         setPosition(this.chip, coordX, coordY);
     }
 
-    // getters and setters
+    public Chip(int coordX, int coordY) {
+        this.coordX = coordX;
+        this.coordY = coordY;
+    }
 
+    // getters and setters
 
     public int getCoordX() {
         return coordX;
+    }
+
+    public void setCoordX(int coordX) {
+        this.coordX = coordX;
     }
 
     public int getCoordY() {
         return coordY;
     }
 
+    public void setCoordY(int coordY) {
+        this.coordY = coordY;
+    }
+
     public int getPosX() {
         return posX;
+    }
+
+    public void setPosX(int posX) {
+        this.posX = posX;
     }
 
     public int getPosY() {
         return posY;
     }
+
+    public void setPosY(int posY) {
+        this.posY = posY;
+    }
+
+    public int getDeltaX() {
+        return deltaX;
+    }
+
+    public void setDeltaX(int deltaX) {
+        this.deltaX = deltaX;
+    }
+
+    public int getDeltaY() {
+        return deltaY;
+    }
+
+    public void setDeltaY(int deltaY) {
+        this.deltaY = deltaY;
+    }
+
+    public TextView getChip() {
+        return chip;
+    }
+
+    public void setChip(TextView chip) {
+        this.chip = chip;
+    }
+
+    public GameModel getModel() {
+        return model;
+    }
+
+    public void setModel(GameModel model) {
+        this.model = model;
+    }
+
 
     // functional
 
