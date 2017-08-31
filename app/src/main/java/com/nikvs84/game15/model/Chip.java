@@ -8,6 +8,8 @@ import android.widget.TextView;
  */
 
 public class Chip implements GameObject {
+    private int id;
+    private String text;
     private int coordX, coordY;
     private int posX, posY;
     private int deltaX, deltaY;
@@ -90,6 +92,15 @@ public class Chip implements GameObject {
 
     public void setChip(TextView chip) {
         this.chip = chip;
+
+        deltaX = this.chip.getWidth();
+        deltaY = this.chip.getWidth();
+        this.posX = coordX * deltaX;
+        this.posY = coordY * deltaY;
+
+        setPosition(chip, posX, posY);
+        this.setId(chip.getId());
+        this.setText((String) chip.getText());
     }
 
     public GameModel getModel() {
@@ -100,7 +111,21 @@ public class Chip implements GameObject {
         this.model = model;
     }
 
+    public int getId() {
+        return id;
+    }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
     // functional
 
     @Override
@@ -167,7 +192,7 @@ public class Chip implements GameObject {
     }
 
     private void setPosition(TextView view, int x, int y) {
-        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) this.chip.getLayoutParams();
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         lp.leftMargin = x;
         lp.topMargin = y;
         view.setLayoutParams(lp);

@@ -21,6 +21,8 @@ public class MainActivity extends AppCompatActivity {
         model.setController(controller);
 
         model.fillGameField();
+        model.setOneChip();
+//        model.setTextForView();
     }
 
     public void updateView() {

@@ -2,8 +2,11 @@ package com.nikvs84.game15.model;
 
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Button;
+import android.widget.RelativeLayout;
 
 import com.nikvs84.game15.MainActivity;
+import com.nikvs84.game15.R;
 import com.nikvs84.game15.controller.EventListener;
 import com.nikvs84.game15.controller.GameController;
 
@@ -21,6 +24,7 @@ public class GameModel {
     MainActivity view;
     Set<Chip> gameChips;
     Context context;
+    RelativeLayout gameFieldLayout;
     public static final int ROW_COUNT = 4;
     public static final int COL_COUNT = 4;
     public static final int DELTA_MOVE = 5;
@@ -33,6 +37,7 @@ public class GameModel {
         gameField = new Chip[ROW_COUNT][COL_COUNT];
         gameChips = new HashSet<>();
         context = view.getApplicationContext();
+        this.gameFieldLayout = (RelativeLayout) view.findViewById(R.id.gameField);
     }
 
     //getters and setters
@@ -99,14 +104,35 @@ public class GameModel {
         for (int i = 0; i < gameField.length; i++) {
             Chip[] chips = gameField[i];
             for (int j = 0; j < chips.length; j++) {
+                if (i == gameField.length - 1 && j == chips.length - 1) {
+                    break;
+                }
                 Chip chip = new Chip(i, j);
                 chip.setModel(this);
                 int chipNumber = getNextNumber();
                 chip.setChip(CellFactory.getInstance(context).getButton(chipNumber));
-                gameChips.add(chip);
                 gameField[i][j] = chip;
+                gameChips.add(chip);
+
+                gameFieldLayout.addView(chip.getChip());
+                gameFieldLayout.invalidate();
             }
+            String iter = "iter" + i;
+            System.out.println(iter);
         }
+        System.out.println("fillGameField");
+    }
+
+    public void setOneChip() {
+        Chip chip = new Chip(0, 0);
+        Button button = CellFactory.getInstance(context).getButton(1);
+        chip.setChip(button);
+        gameFieldLayout.addView(chip.getChip());
+    }
+
+    public void setTextForView() {
+        Button button = (Button) gameFieldLayout.findViewById(R.id.test);
+        button.setText("111");
     }
 
     private int getNextNumber() {
