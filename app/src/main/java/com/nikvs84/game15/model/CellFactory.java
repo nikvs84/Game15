@@ -70,7 +70,7 @@ public class CellFactory {
         view.setId(number);
         String label = "" + number;
         view.setText(label);
-        view.setWidth(size);
+//        view.setWidth(size);
 
     }
 }

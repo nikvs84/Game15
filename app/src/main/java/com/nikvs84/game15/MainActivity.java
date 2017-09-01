@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
         model.setController(controller);
 
         model.fillGameField();
-        model.setOneChip();
+//        model.setOneChip();
 //        model.setTextForView();
     }
 

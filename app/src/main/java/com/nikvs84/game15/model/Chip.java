@@ -1,7 +1,10 @@
 package com.nikvs84.game15.model;
 
+import android.content.Context;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.nikvs84.game15.R;
 
 /**
  * Created by Admin on 27.08.2017.
@@ -93,8 +96,10 @@ public class Chip implements GameObject {
     public void setChip(TextView chip) {
         this.chip = chip;
 
-        deltaX = this.chip.getWidth();
-        deltaY = this.chip.getWidth();
+        Context context = chip.getContext();
+
+        deltaX = context.getResources().getDimensionPixelSize(R.dimen.cell_width);
+        deltaY = context.getResources().getDimensionPixelSize(R.dimen.cell_height);
         this.posX = coordX * deltaX;
         this.posY = coordY * deltaY;
 
@@ -192,7 +197,7 @@ public class Chip implements GameObject {
     }
 
     private void setPosition(TextView view, int x, int y) {
-        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) view.getLayoutParams();
         lp.leftMargin = x;
         lp.topMargin = y;
         view.setLayoutParams(lp);

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.nikvs84.game15.MainActivity;
 import com.nikvs84.game15.R;
@@ -110,24 +111,41 @@ public class GameModel {
                 Chip chip = new Chip(i, j);
                 chip.setModel(this);
                 int chipNumber = getNextNumber();
-                chip.setChip(CellFactory.getInstance(context).getButton(chipNumber));
+                Button button = new Button(context);
+                setChipParams(button, chipNumber);
+                chip.setChip(button);
                 gameField[i][j] = chip;
                 gameChips.add(chip);
-
-                gameFieldLayout.addView(chip.getChip());
-                gameFieldLayout.invalidate();
             }
-            String iter = "iter" + i;
-            System.out.println(iter);
         }
-        System.out.println("fillGameField");
     }
 
     public void setOneChip() {
-        Chip chip = new Chip(0, 0);
-        Button button = CellFactory.getInstance(context).getButton(1);
+        Chip chip = new Chip(1, 3);
+//        Button button = CellFactory.getInstance(context).getButton(1);
+        Button button = new Button(context);
+        button.setText("" + 123);
+        int id = 123;
+        button.setId(id);
+        gameFieldLayout.addView(button);
+
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) button.getLayoutParams();
+
+        params.width = context.getResources().getDimensionPixelSize(R.dimen.cell_width);
+        params.height = context.getResources().getDimensionPixelSize(R.dimen.cell_height);
+
         chip.setChip(button);
-        gameFieldLayout.addView(chip.getChip());
+    }
+
+    private void setChipParams(TextView view, int number) {
+        view.setText("" + number);
+        view.setId(number);
+        gameFieldLayout.addView(view);
+
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) view.getLayoutParams();
+
+        params.width = context.getResources().getDimensionPixelSize(R.dimen.cell_width);
+        params.height = context.getResources().getDimensionPixelSize(R.dimen.cell_height);
     }
 
     public void setTextForView() {
