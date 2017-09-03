@@ -71,6 +71,5 @@ public class CellFactory {
         String label = "" + number;
         view.setText(label);
 //        view.setWidth(size);
-
     }
 }

@@ -2,6 +2,7 @@ package com.nikvs84.game15.model;
 
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -26,6 +27,7 @@ public class GameModel {
     Set<Chip> gameChips;
     Context context;
     RelativeLayout gameFieldLayout;
+    RelativeLayout infoBar;
     public static final int ROW_COUNT = 4;
     public static final int COL_COUNT = 4;
     public static final int DELTA_MOVE = 5;
@@ -39,6 +41,7 @@ public class GameModel {
         gameChips = new HashSet<>();
         context = view.getApplicationContext();
         this.gameFieldLayout = (RelativeLayout) view.findViewById(R.id.gameField);
+        this.infoBar = (RelativeLayout) view.findViewById(R.id.infoBar);
     }
 
     //getters and setters
@@ -77,6 +80,10 @@ public class GameModel {
 
     public void setGameChips(Set<Chip> gameChips) {
         this.gameChips = gameChips;
+    }
+
+    public RelativeLayout getInfoBar() {
+        return infoBar;
     }
     // functional
 
@@ -140,17 +147,13 @@ public class GameModel {
     private void setChipParams(TextView view, int number) {
         view.setText("" + number);
         view.setId(number);
+        view.setOnClickListener((View.OnClickListener) controller);
         gameFieldLayout.addView(view);
 
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) view.getLayoutParams();
 
         params.width = context.getResources().getDimensionPixelSize(R.dimen.cell_width);
         params.height = context.getResources().getDimensionPixelSize(R.dimen.cell_height);
-    }
-
-    public void setTextForView() {
-        Button button = (Button) gameFieldLayout.findViewById(R.id.test);
-        button.setText("111");
     }
 
     private int getNextNumber() {
@@ -163,4 +166,32 @@ public class GameModel {
 
         return result;
     }
+
+    public boolean isLevelComplete() {
+        boolean result = true;
+        int currentId = 0;
+        for (int i = 0; i < gameField.length; i++) {
+            for (int j = 0; j < gameField[i].length; j++) {
+                Chip chip = gameField[i][j];
+                if (chip == null) {
+                    if (i < gameField.length - 1 && j < gameField[i].length - 1) {
+                        result = false;
+                        return result;
+                    }
+                    break;
+                }
+                int chipId = chip.getId();
+                if (chipId < currentId) {
+                    result = false;
+                    return result;
+                } else {
+                    currentId = chipId;
+                }
+            }
+        }
+
+        return result;
+    }
+
+
 }

@@ -135,40 +135,46 @@ public class Chip implements GameObject {
 
     @Override
     public void moveUp() {
-        if (coordY > 0) {
-            coordY--;
+        coordY--;
 
-            int destination = posY - deltaY;
+        int destination = posY - deltaY;
 
-            while (posY < destination - model.getDeltaMove()) {
-                posY -= model.getDeltaMove();
-                posY = destination;
-                setPosition(chip, posX, posY);
-                model.updateView();
-            }
+//            while (posY < destination - model.getDeltaMove()) {
+//                posY -= model.getDeltaMove();
+//                posY = destination;
+//                setPosition(chip, posX, posY);
+//                model.updateView();
+//            }
 
-            setPosition(chip, posX, destination);
-            model.updateView();
-        }
+        setPosition(chip, posX, destination);
+        model.updateView();
     }
 
     @Override
     public void moveDown() {
         coordY++;
 
+        int destination = posY + deltaY;
+
+        setPosition(chip, posX, destination);
     }
 
     @Override
     public void moveLeft() {
-        if (coordX > 0) {
-            coordX--;
-        }
+        coordX--;
+        int destination = posX - deltaX;
+
+        setPosition(chip, destination, posY);
+
     }
 
     @Override
     public void moveRight() {
         coordX++;
 
+        int destination = posX + deltaX;
+
+        setPosition(chip, destination, posY);
     }
 
     @Override
@@ -197,6 +203,11 @@ public class Chip implements GameObject {
     }
 
     private void setPosition(TextView view, int x, int y) {
+        this.posX = x;
+        this.posY = y;
+
+        model.getGameField()[coordY][coordX] = this;
+
         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) view.getLayoutParams();
         lp.leftMargin = x;
         lp.topMargin = y;
@@ -236,7 +247,7 @@ public class Chip implements GameObject {
     }
 
     public boolean isMovePossible(Direction direction) {
-        boolean result = false;
+        boolean result = true;
         int newCoordX = coordX, newCoordY = coordY;
 
         switch (direction) {
@@ -255,9 +266,9 @@ public class Chip implements GameObject {
         }
 
         for (Chip chip : model.getGameChips()) {
-            if (chip.getCoordX() != newCoordX || chip.getCoordY() != newCoordY)
-                result = true;
-            break;
+            if ((newCoordX < 0) || (newCoordY < 0) || (newCoordX >= model.getColCount()) || (newCoordY >= model.getRowCount()) || (chip.getCoordX() == newCoordX && chip.getCoordY() == newCoordY)) {
+                result = false;
+            }
         }
 
         return result;

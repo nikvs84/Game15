@@ -11,14 +11,21 @@
 
     <RelativeLayout
         android:id="@+id/gameField"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerInParent="true">
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/infoBar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <Button
-            android:id="@+id/test"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+        <TextView
+            android:id="@+id/info_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Test"
-            android:layout_alignParentBottom="true" />
+            android:text="@string/info_button"/>
     </RelativeLayout>
 
 </RelativeLayout>
