@@ -1,7 +1,6 @@
 package com.nikvs84.game15.model;
 
 import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
@@ -10,52 +9,51 @@ import android.widget.TextView;
 import com.nikvs84.game15.MainActivity;
 import com.nikvs84.game15.R;
 import com.nikvs84.game15.controller.EventListener;
-import com.nikvs84.game15.controller.GameController;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by Admin on 27.08.2017.
  */
 
 public class GameModel {
-    public static final int MAX_GAME_NUMBER = 15;
+    private int maxGameNumber = 15;
     EventListener controller;
     MainActivity view;
     Set<Chip> gameChips;
     Context context;
     RelativeLayout gameFieldLayout;
     RelativeLayout infoBar;
-    public static final int ROW_COUNT = 4;
-    public static final int COL_COUNT = 4;
-    public static final int DELTA_MOVE = 5;
+    private int rowCount = 4;
+    private int colCount = 4;
+    private int deltaMove = 5;
 
     private Chip[][] gameField;
 
     // constructors
     public GameModel(MainActivity mainActivity) {
         this.view = mainActivity;
-        gameField = new Chip[ROW_COUNT][COL_COUNT];
+        gameField = new Chip[rowCount][colCount];
         gameChips = new HashSet<>();
         context = view.getApplicationContext();
         this.gameFieldLayout = (RelativeLayout) view.findViewById(R.id.gameField);
-        this.infoBar = (RelativeLayout) view.findViewById(R.id.infoBar);
+        this.infoBar = (RelativeLayout) view.findViewById(R.id.info_bar);
     }
+
 
     //getters and setters
 
-    public static int getRowCount() {
-        return ROW_COUNT;
+    public int getRowCount() {
+        return rowCount;
     }
 
-    public static int getColCount() {
-        return COL_COUNT;
+    public int getColCount() {
+        return colCount;
     }
 
-    public static int getDeltaMove() {
-        return DELTA_MOVE;
+    public int getDeltaMove() {
+        return deltaMove;
     }
 
     public EventListener getController() {
@@ -92,8 +90,8 @@ public class GameModel {
     }
 
     private int[] getCoordinates(int leftBound, int rightBound) {
-        int coordX = (int) Math.random() * ROW_COUNT;
-        int coordY = (int) Math.random() * COL_COUNT;
+        int coordX = (int) Math.random() * rowCount;
+        int coordY = (int) Math.random() * colCount;
 
         int[] result = new int[]{coordX, coordY};
 
@@ -127,22 +125,21 @@ public class GameModel {
         }
     }
 
-    public void setOneChip() {
-        Chip chip = new Chip(1, 3);
-//        Button button = CellFactory.getInstance(context).getButton(1);
-        Button button = new Button(context);
-        button.setText("" + 123);
-        int id = 123;
-        button.setId(id);
-        gameFieldLayout.addView(button);
-
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) button.getLayoutParams();
-
-        params.width = context.getResources().getDimensionPixelSize(R.dimen.cell_width);
-        params.height = context.getResources().getDimensionPixelSize(R.dimen.cell_height);
-
-        chip.setChip(button);
-    }
+//    public void setOneChip() {
+//        Chip chip = new Chip(1, 3);
+//        Button button = new Button(context);
+//        button.setText("" + 123);
+//        int id = 123;
+//        button.setId(id);
+//        gameFieldLayout.addView(button);
+//
+//        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) button.getLayoutParams();
+//
+//        params.width = context.getResources().getDimensionPixelSize(R.dimen.cell_width);
+//        params.height = context.getResources().getDimensionPixelSize(R.dimen.cell_height);
+//
+//        chip.setChip(button);
+//    }
 
     private void setChipParams(TextView view, int number) {
         view.setText("" + number);
@@ -157,7 +154,7 @@ public class GameModel {
     }
 
     private int getNextNumber() {
-        int result = getRandomValue(1, MAX_GAME_NUMBER);
+        int result = getRandomValue(1, maxGameNumber);
         for (Chip chip: gameChips) {
             if (chip.getChip().getText().equals("" + result)) {
                 result = getNextNumber();
@@ -193,5 +190,20 @@ public class GameModel {
         return result;
     }
 
+    public void clearGameField() {
+        gameFieldLayout.removeAllViews();
+    }
+
+    public void startNewLewel(int rowCount, int colCount) {
+        if (rowCount > 0 && colCount > 0) {
+            clearGameField();
+
+            this.rowCount = rowCount;
+            this.colCount = colCount;
+            this.maxGameNumber = this.rowCount * this.colCount - 1;
+
+            fillGameField();
+        }
+    }
 
 }
