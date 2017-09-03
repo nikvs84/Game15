@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
         controller = new GameController(this, model);
         model.setController(controller);
 
-        model.fillGameField();
+        model.startNewLevel();
 //        model.setOneChip();
 //        model.setTextForView();
     }

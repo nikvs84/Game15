@@ -2,6 +2,7 @@ package com.nikvs84.game15.controller;
 
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -72,6 +73,10 @@ public class GameController implements EventListener, View.OnClickListener {
 
     @Override
     public void onClick(View v) {
+        chipOnclick(v);
+    }
+
+    private void chipOnclick(View v) {
         for (Chip chip : gameModel.getGameChips()) {
             if (chip.getChip() == v) {
                 move(chip);
@@ -85,10 +90,12 @@ public class GameController implements EventListener, View.OnClickListener {
         }
     }
 
+
     private void onLevelComplete() {
         TextView info = (TextView) mainActivity.findViewById(R.id.info_view);
 
         info.setText("Поздравляю :-)");
 //        info.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
     }
+
 }

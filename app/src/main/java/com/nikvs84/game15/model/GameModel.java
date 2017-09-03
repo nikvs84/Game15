@@ -3,12 +3,15 @@ package com.nikvs84.game15.model;
 import android.content.Context;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nikvs84.game15.MainActivity;
 import com.nikvs84.game15.R;
 import com.nikvs84.game15.controller.EventListener;
+import com.nikvs84.game15.controller.RBListener;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -18,8 +21,9 @@ import java.util.Set;
  */
 
 public class GameModel {
-    private int maxGameNumber = 15;
+    private int maxGameNumber;
     EventListener controller;
+    RBListener rbListener;
     MainActivity view;
     Set<Chip> gameChips;
     Context context;
@@ -37,6 +41,7 @@ public class GameModel {
         gameField = new Chip[rowCount][colCount];
         gameChips = new HashSet<>();
         context = view.getApplicationContext();
+        rbListener = new RBListener(this);
         this.gameFieldLayout = (RelativeLayout) view.findViewById(R.id.gameField);
         this.infoBar = (RelativeLayout) view.findViewById(R.id.info_bar);
     }
@@ -98,14 +103,9 @@ public class GameModel {
         return result;
     }
 
-    private int getRandomValue(int leftBound, int rightBound) {
-        int result = 0;
-        int temp = rightBound - leftBound + 1;
-        result = (int) (Math.random() * temp) + leftBound;
-
-        return result;
-    }
-
+    /**
+     * Заполняет игровое поле фишками.
+     */
     public void fillGameField() {
         for (int i = 0; i < gameField.length; i++) {
             Chip[] chips = gameField[i];
@@ -126,6 +126,7 @@ public class GameModel {
     }
 
 //    public void setOneChip() {
+
 //        Chip chip = new Chip(1, 3);
 //        Button button = new Button(context);
 //        button.setText("" + 123);
@@ -141,6 +142,11 @@ public class GameModel {
 //        chip.setChip(button);
 //    }
 
+    /**
+     * Устанавливает атрибуты (параметры) для визуального представления игровой фишки.
+     * @param view представление фишки (визуальный компонент)
+     * @param number номер фишки
+     */
     private void setChipParams(TextView view, int number) {
         view.setText("" + number);
         view.setId(number);
@@ -153,6 +159,10 @@ public class GameModel {
         params.height = context.getResources().getDimensionPixelSize(R.dimen.cell_height);
     }
 
+    /**
+     * Возвращает незадействованный номер игровой фишки.
+     * @return int (свободный номер для игровой фишки)
+     */
     private int getNextNumber() {
         int result = getRandomValue(1, maxGameNumber);
         for (Chip chip: gameChips) {
@@ -164,6 +174,24 @@ public class GameModel {
         return result;
     }
 
+    /**
+     * Возвращает случайное целое число в диапазоне [<b><i>leftBound</i></b>, <b><i>rightBound</i></b>].
+     * @param leftBound левая граница диапазона
+     * @param rightBound правая граница диапазона
+     * @return int (случайное целое число)
+     */
+    private int getRandomValue(int leftBound, int rightBound) {
+        int result = 0;
+        int temp = rightBound - leftBound + 1;
+        result = (int) (Math.random() * temp) + leftBound;
+
+        return result;
+    }
+
+    /**
+     * Возвращает <b><i>true</i></b>, если уровень завершен и <b><i>false</i></b>, если не завершен.
+     * @return boolean
+     */
     public boolean isLevelComplete() {
         boolean result = true;
         int currentId = 0;
@@ -190,20 +218,124 @@ public class GameModel {
         return result;
     }
 
+    /**
+     * Очистка игрового поля.
+     * Удаляются все игровые объекты.
+     */
     public void clearGameField() {
         gameFieldLayout.removeAllViews();
+        for (Chip chip : this.getGameChips()) {
+            chip = null;
+        }
+        this.getGameChips().clear();
     }
 
+    public void startNewLevel() {
+        setControlBar();
+        int rows = getGameRowsCount();
+        startNewLevel(rows);
+    }
+
+    public void startNewLevel(int rows) {
+        startNewLewel(rows, rows);
+    }
+
+    /**
+     * Старт нового уровня.
+     * @param rowCount количество строк игрового поля
+     * @param colCount количество столбцов игрового поля
+     */
     public void startNewLewel(int rowCount, int colCount) {
         if (rowCount > 0 && colCount > 0) {
             clearGameField();
 
             this.rowCount = rowCount;
             this.colCount = colCount;
+
+            this.setGameField(new Chip[rowCount][colCount]);
+
             this.maxGameNumber = this.rowCount * this.colCount - 1;
+
+            TextView info = (TextView) view.findViewById(R.id.info_view);
+            info.setText(R.string.info_view);
 
             fillGameField();
         }
     }
 
+    /**
+     * Возвращает количество строк игрового поля.
+     * @return int (количество строк игрового поля)
+     */
+    public int getGameRowsCount() {
+        int result = 4;
+
+        RadioGroup radioGroup = (RadioGroup) view.findViewById(R.id.row_count);
+        int checkedId = radioGroup.getCheckedRadioButtonId();
+
+        if (checkedId > 0) {
+            RadioButton radioButton = (RadioButton) radioGroup.findViewById(checkedId);
+            String rbLabel = (String) radioButton.getText();
+            char c = rbLabel.charAt(0);
+
+            switch (c) {
+                case '3':
+                    result = 3;
+                    break;
+                case '4':
+                    result = 4;
+                    break;
+                default:
+                    result = 4;
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Устанавливает элементы панели управления.
+     */
+    private void setControlBar() {
+        RadioGroup radioGroup = (RadioGroup) view.findViewById(R.id.row_count);
+
+        RadioButton rb_3 = new RadioButton(context);
+        RadioButton rb_4 = new RadioButton(context);
+        radioGroup.addView(rb_3);
+        radioGroup.addView(rb_4);
+
+        rb_3.setText(R.string.rb_3);
+        rb_4.setText(R.string.rb_4);
+
+        rb_3.setTextColor(context.getResources().getColor(R.color.colorPrimaryDark));
+        rb_4.setTextColor(context.getResources().getColor(R.color.colorPrimaryDark));
+
+        rb_3.setBackgroundColor(context.getResources().getColor(R.color.rb_background));
+        rb_4.setBackgroundColor(context.getResources().getColor(R.color.rb_background));
+
+        RadioGroup.LayoutParams lp3 = (RadioGroup.LayoutParams) rb_3.getLayoutParams();
+        RadioGroup.LayoutParams lp4 = (RadioGroup.LayoutParams) rb_4.getLayoutParams();
+        lp3.weight = 1;
+        lp4.weight = 1;
+
+        setRBListener(radioGroup, rbListener);
+
+        rb_3.setChecked(false);
+        rb_4.setChecked(true);
+    }
+
+    /**
+     * Устанавливает OnClickListener для группы радио-кнопок <b><i>radioGroup</i></b>
+     * @param radioGroup группа радиокнопок
+     * @param listener слушатель события <b><i>onClick</i></b> для ридио-кнопки.
+     */
+    private void setRBListener(RadioGroup radioGroup, View.OnClickListener listener) {
+        int count = radioGroup.getChildCount();
+
+        for (int i = 0; i < count; i++) {
+            RadioButton rb = (RadioButton) radioGroup.getChildAt(i);
+
+            rb.setOnClickListener(listener);
+        }
+    }
 }
