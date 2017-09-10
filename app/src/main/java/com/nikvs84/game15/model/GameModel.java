@@ -278,7 +278,7 @@ public class GameModel {
             if (orientation == Configuration.ORIENTATION_PORTRAIT) {
                 info = (TextView) view.findViewById(R.id.info_view);
             } else {
-//                info = (TextView) view.findViewById(R.id.info_view_land);
+                info = (TextView) view.findViewById(R.id.info_view);
             }
             info.setText(R.string.info_view);
 
@@ -298,7 +298,7 @@ public class GameModel {
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
             radioGroup = (RadioGroup) view.findViewById(R.id.row_count);
         } else {
-//            radioGroup = (RadioGroup) view.findViewById(R.id.row_count_land);
+            radioGroup = (RadioGroup) view.findViewById(R.id.row_count);
         }
         int checkedId = radioGroup.getCheckedRadioButtonId();
 
@@ -330,11 +330,11 @@ public class GameModel {
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
             radioGroup = (RadioGroup) view.findViewById(R.id.row_count);
         } else {
-//            radioGroup = (RadioGroup) view.findViewById(R.id.row_count_land);
+            radioGroup = (RadioGroup) view.findViewById(R.id.row_count);
         }
         radioGroup = (RadioGroup) view.findViewById(R.id.row_count);
         if (radioGroup == null) {
-//            radioGroup = (RadioGroup) view.findViewById(R.id.row_count_land);
+            radioGroup = (RadioGroup) view.findViewById(R.id.row_count);
         }
 
         RadioButton rb_3 = new RadioButton(context);
@@ -383,8 +383,8 @@ public class GameModel {
             gameFieldLayout = (RelativeLayout) view.findViewById(R.id.gameField);
             infoBar = (RelativeLayout) view.findViewById(R.id.info_bar);
         } else {
-//            gameFieldLayout = (RelativeLayout) view.findViewById(R.id.gameField_land);
-//            infoBar = (RelativeLayout) view.findViewById(R.id.info_bar_land);
+            gameFieldLayout = (RelativeLayout) view.findViewById(R.id.gameField);
+            infoBar = (RelativeLayout) view.findViewById(R.id.info_bar);
         }
     }
 }
