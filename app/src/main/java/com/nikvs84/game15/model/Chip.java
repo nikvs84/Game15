@@ -206,7 +206,7 @@ public class Chip implements GameObject {
         this.posX = x;
         this.posY = y;
 
-        model.getGameField()[coordY][coordX] = this;
+//        model.getGameField()[coordY][coordX] = this;
 
         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) view.getLayoutParams();
         lp.leftMargin = x;
@@ -285,4 +285,14 @@ public class Chip implements GameObject {
         return result;
     }
 
+    @Override
+    public String toString() {
+        return "Chip{" +
+                "id=" + id +
+                ", coordX=" + coordX +
+                ", coordY=" + coordY +
+                ", posX=" + posX +
+                ", posY=" + posY +
+                '}';
+    }
 }

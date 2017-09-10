@@ -1,6 +1,7 @@
 package com.nikvs84.game15.model;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
@@ -29,11 +30,12 @@ public class GameModel {
     Context context;
     RelativeLayout gameFieldLayout;
     RelativeLayout infoBar;
+    private int orientation;
     private int rowCount = 4;
     private int colCount = 4;
     private int deltaMove = 5;
 
-    private Chip[][] gameField;
+    private static Chip[][] gameField;
 
     // constructors
     public GameModel(MainActivity mainActivity) {
@@ -42,8 +44,7 @@ public class GameModel {
         gameChips = new HashSet<>();
         context = view.getApplicationContext();
         rbListener = new RBListener(this);
-        this.gameFieldLayout = (RelativeLayout) view.findViewById(R.id.gameField);
-        this.infoBar = (RelativeLayout) view.findViewById(R.id.info_bar);
+        setLayoutsByOrientation();
     }
 
 
@@ -113,18 +114,35 @@ public class GameModel {
                 if (i == gameField.length - 1 && j == chips.length - 1) {
                     break;
                 }
-                Chip chip = new Chip(i, j);
+                Chip chip = new Chip(j, i);
                 chip.setModel(this);
                 int chipNumber = getNextNumber();
-                Button button = new Button(context);
-                setChipParams(button, chipNumber);
-                chip.setChip(button);
+                chip.setId(chipNumber);
                 gameField[i][j] = chip;
-                gameChips.add(chip);
             }
         }
     }
 
+    /**
+     * Добавляет в игровые фишки кнопки и устанавливает эти кнопки на слой <b><i>gameField</i></b>
+     */
+    public void addGameFieldToLayout() {
+        for (int i = 0; i < gameField.length; i++) {
+            Chip[] chips = gameField[i];
+            for (int j = 0; j < chips.length; j++) {
+                if (i == gameField.length - 1 && j == chips.length - 1) {
+                    break;
+                }
+                Chip chip = gameField[i][j];
+                chip.setModel(this);
+                int chipNumber = chip.getId();
+                Button button = new Button(context);
+                setChipParams(button, chipNumber);
+                chip.setChip(button);
+                gameChips.add(chip);
+            }
+        }
+    }
 //    public void setOneChip() {
 
 //        Chip chip = new Chip(1, 3);
@@ -256,10 +274,16 @@ public class GameModel {
 
             this.maxGameNumber = this.rowCount * this.colCount - 1;
 
-            TextView info = (TextView) view.findViewById(R.id.info_view);
+            TextView info = null;
+            if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+                info = (TextView) view.findViewById(R.id.info_view);
+            } else {
+//                info = (TextView) view.findViewById(R.id.info_view_land);
+            }
             info.setText(R.string.info_view);
 
             fillGameField();
+            addGameFieldToLayout();
         }
     }
 
@@ -270,7 +294,12 @@ public class GameModel {
     public int getGameRowsCount() {
         int result = 4;
 
-        RadioGroup radioGroup = (RadioGroup) view.findViewById(R.id.row_count);
+        RadioGroup radioGroup = null;
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            radioGroup = (RadioGroup) view.findViewById(R.id.row_count);
+        } else {
+//            radioGroup = (RadioGroup) view.findViewById(R.id.row_count_land);
+        }
         int checkedId = radioGroup.getCheckedRadioButtonId();
 
         if (checkedId > 0) {
@@ -297,7 +326,16 @@ public class GameModel {
      * Устанавливает элементы панели управления.
      */
     private void setControlBar() {
-        RadioGroup radioGroup = (RadioGroup) view.findViewById(R.id.row_count);
+        RadioGroup radioGroup = null;
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            radioGroup = (RadioGroup) view.findViewById(R.id.row_count);
+        } else {
+//            radioGroup = (RadioGroup) view.findViewById(R.id.row_count_land);
+        }
+        radioGroup = (RadioGroup) view.findViewById(R.id.row_count);
+        if (radioGroup == null) {
+//            radioGroup = (RadioGroup) view.findViewById(R.id.row_count_land);
+        }
 
         RadioButton rb_3 = new RadioButton(context);
         RadioButton rb_4 = new RadioButton(context);
@@ -336,6 +374,17 @@ public class GameModel {
             RadioButton rb = (RadioButton) radioGroup.getChildAt(i);
 
             rb.setOnClickListener(listener);
+        }
+    }
+
+    public void setLayoutsByOrientation() {
+        orientation = context.getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            gameFieldLayout = (RelativeLayout) view.findViewById(R.id.gameField);
+            infoBar = (RelativeLayout) view.findViewById(R.id.info_bar);
+        } else {
+//            gameFieldLayout = (RelativeLayout) view.findViewById(R.id.gameField_land);
+//            infoBar = (RelativeLayout) view.findViewById(R.id.info_bar_land);
         }
     }
 }
