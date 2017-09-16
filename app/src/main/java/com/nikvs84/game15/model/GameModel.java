@@ -2,6 +2,8 @@ package com.nikvs84.game15.model;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
@@ -14,14 +16,25 @@ import com.nikvs84.game15.R;
 import com.nikvs84.game15.controller.EventListener;
 import com.nikvs84.game15.controller.RBListener;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by Admin on 27.08.2017.
  */
 
 public class GameModel {
+    public static final String SAVE_DATA_DELIMITER = ";";
+    public static final String SAVED_FILE_EXTENSION = ".csv";
     private int maxGameNumber;
     EventListener controller;
     RBListener rbListener;
@@ -119,8 +132,47 @@ public class GameModel {
                 int chipNumber = getNextNumber();
                 chip.setId(chipNumber);
                 gameField[i][j] = chip;
+
+                gameChips.add(chip);
             }
         }
+    }
+
+    private int loadSavedGame(File savedFile) {
+        int chipsCount = 0;
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(savedFile));
+            if (reader.ready()) {
+                String line = reader.readLine();
+                String[] labels = line.split(SAVE_DATA_DELIMITER);
+
+                for (int i = 0; i < gameField.length; i++) {
+                    for (int j = 0; j < gameField[i].length; j++) {
+                        int labIndex = this.rowCount * i + j;
+                        String label = labels[labIndex];
+                        if (label.matches("\\d+")) {
+                            Chip chip = new Chip(j, i);
+                            chip.setModel(this);
+                            int chipNumber = Integer.parseInt(label);
+                            chip.setId(chipNumber);
+                            gameField[i][j] = chip;
+
+                            gameChips.add(chip);
+
+                            chipsCount++;
+                        } else {
+                            gameField[i][j] = null;
+                        }
+                    }
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return chipsCount;
     }
 
     /**
@@ -130,16 +182,14 @@ public class GameModel {
         for (int i = 0; i < gameField.length; i++) {
             Chip[] chips = gameField[i];
             for (int j = 0; j < chips.length; j++) {
-                if (i == gameField.length - 1 && j == chips.length - 1) {
-                    break;
-                }
                 Chip chip = gameField[i][j];
-                chip.setModel(this);
-                int chipNumber = chip.getId();
-                Button button = new Button(context);
-                setChipParams(button, chipNumber);
-                chip.setChip(button);
-                gameChips.add(chip);
+
+                if (chip != null) {
+                    int chipNumber = chip.getId();
+                    Button button = new Button(context);
+                    setChipParams(button, chipNumber);
+                    chip.setChip(button);
+                }
             }
         }
     }
@@ -184,7 +234,7 @@ public class GameModel {
     private int getNextNumber() {
         int result = getRandomValue(1, maxGameNumber);
         for (Chip chip: gameChips) {
-            if (chip.getChip().getText().equals("" + result)) {
+            if (chip.getId() == result) {
                 result = getNextNumber();
             }
         }
@@ -282,7 +332,17 @@ public class GameModel {
             }
             info.setText(R.string.info_view);
 
-            fillGameField();
+            File savedFile = getSavedFile();
+            int loadedChips = -1;
+            if (savedFile.exists()) {
+                Log.d(TAG, "startNewLewel: Loading saved game");
+                loadedChips = loadSavedGame(savedFile);
+                savedFile.delete();
+                Log.d(TAG, "startNewLewel: Game loaded");
+            }
+            if (loadedChips < maxGameNumber) {
+                fillGameField();
+            }
             addGameFieldToLayout();
         }
     }
@@ -377,6 +437,9 @@ public class GameModel {
         }
     }
 
+    /**
+     * Устанавливает слой согласно текущей ориентации.
+     */
     public void setLayoutsByOrientation() {
         orientation = context.getResources().getConfiguration().orientation;
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -387,4 +450,48 @@ public class GameModel {
             infoBar = (RelativeLayout) view.findViewById(R.id.info_bar);
         }
     }
+
+    public void saveGame() throws IOException {
+        Log.i(TAG, "saveGame: Start saving");
+        File savedFile = getSavedFile();
+
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(savedFile));
+            StringBuilder labels = new StringBuilder();
+            for (int i = 0; i < gameField.length; i++) {
+                for (int j = 0; j < gameField[i].length; j++) {
+                    Chip chip = gameField[i][j];
+                    String label;
+                    if (chip != null) {
+                        label = "" + chip.getId();
+                    } else {
+                        label = "blank";
+                    }
+                    labels.append(label + SAVE_DATA_DELIMITER);
+                }
+            }
+
+            writer.write(labels.toString());
+            writer.flush();
+            writer.close();
+
+            Log.i(TAG, "saveGame: Saving complete");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @NonNull
+    private File getSavedFile() {
+        File dir = context.getFilesDir();
+        return new File(dir, getSavedFileName());
+    }
+
+    private String getSavedFileName() {
+        String fileName = "save_" + this.rowCount + SAVED_FILE_EXTENSION;
+
+        return fileName;
+    }
+
 }

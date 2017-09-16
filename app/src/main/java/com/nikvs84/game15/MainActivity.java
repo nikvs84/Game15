@@ -8,6 +8,8 @@ import com.nikvs84.game15.controller.EventListener;
 import com.nikvs84.game15.controller.GameController;
 import com.nikvs84.game15.model.GameModel;
 
+import java.io.IOException;
+
 public class MainActivity extends AppCompatActivity {
 
     EventListener controller;
@@ -25,6 +27,26 @@ public class MainActivity extends AppCompatActivity {
         model.startNewLevel();
 //        model.setOneChip();
 //        model.setTextForView();
+    }
+
+    @Override
+    protected void onDestroy() {
+        try {
+            model.saveGame();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        super.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        try {
+            model.saveGame();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        super.onBackPressed();
     }
 
     public void updateView() {

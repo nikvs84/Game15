@@ -181,6 +181,7 @@ public class Chip implements GameObject {
     public void move() {
         Direction direction = getPossibleDirection();
         if (direction != null) {
+            clearGameCell(this.coordY, this.coordX);
             move(direction);
         }
     }
@@ -202,11 +203,16 @@ public class Chip implements GameObject {
         }
     }
 
+    private void clearGameCell(int y, int x) {
+        model.getGameField()[y][x] = null;
+    }
+
     private void setPosition(TextView view, int x, int y) {
         this.posX = x;
         this.posY = y;
 
-//        model.getGameField()[coordY][coordX] = this;
+        // обновляем позицию фишки на игровом поле
+        model.getGameField()[coordY][coordX] = this;
 
         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) view.getLayoutParams();
         lp.leftMargin = x;
@@ -268,6 +274,7 @@ public class Chip implements GameObject {
         for (Chip chip : model.getGameChips()) {
             if ((newCoordX < 0) || (newCoordY < 0) || (newCoordX >= model.getColCount()) || (newCoordY >= model.getRowCount()) || (chip.getCoordX() == newCoordX && chip.getCoordY() == newCoordY)) {
                 result = false;
+                break;
             }
         }
 
